@@ -60,7 +60,7 @@ export default function PublicRegistrationPage() {
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="name">Nama Lengkap</Label>
+              <Label htmlFor="name">Fullname</Label>
               <Input 
                 id="name" 
                 required 

@@ -19,6 +19,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   ChevronRight,
   Upload,
@@ -241,21 +242,21 @@ export default function EditCompetitionPage() {
   const [toFinal, setToFinal] = useState<number>(2);
   const [categories, setCategories] = useState<string[]>([]);
   const SUBJECT_SUGGESTIONS = [
-    "Matematika", "Fisika", "Biologi", "Kimia", "Bahasa Inggris",
-    "Bahasa Indonesia", "Komputer & Informatika", "Sejarah", "Geografi",
-    "Ekonomi", "Seni Budaya", "Olahraga", "Pendidikan Agama", "Robotik", "Kesenian"
+    "Mathematics", "Physics", "Biology", "Chemistry", "English",
+    "Indonesian", "Komputer & Informatika", "History", "Geography",
+    "Economics", "Seni Budaya", "Olahraga", "Religion Education", "Robotik", "Kesenian"
   ];
   const [subjects, setSubjects] = useState<string[]>([]);
   const [subjectInput, setSubjectInput] = useState("");
   const [isSubjectFocused, setIsSubjectFocused] = useState(false);
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const PRIZE_WEIGHTS: Record<string, number> = {
-    ["Mahasiswa"]: 5,
-    ["Umum"]: 5,
-    ["SMA"]: 4,
-    ["SMP"]: 3,
-    ["SD"]: 2,
-    ["TK"]: 1
+    ["University"]: 5,
+    ["General"]: 5,
+    ["High School"]: 4,
+    ["Middle School"]: 3,
+    ["Elementary"]: 2,
+    ["Kindergarten"]: 1
   };
   const [isSplitBySubject, setIsSplitBySubject] = useState(false);
   const [allocationPrizes, setAllocationPrizes] = useState<Record<string, { rank1: string, rank2: string, rank3: string }>>({});
@@ -282,7 +283,7 @@ export default function EditCompetitionPage() {
   const handleAutoDistribute = (manualTotal?: number) => {
     const rawTotal = manualTotal !== undefined ? manualTotal : parseInt(totalPrize.replace(/\D/g, ''));
     if (!rawTotal || isNaN(rawTotal)) {
-      if (manualTotal === undefined) showAlert("Masukkan nominal Total Prize terlebih dahulu.");
+      if (manualTotal === undefined) showAlert("Please enter the Total Prize amount first.");
       return;
     }
 
@@ -465,7 +466,7 @@ export default function EditCompetitionPage() {
       return timeA - timeB;
     });
 
-  const CATEGORIES = ["TK", "SD", "SMP", "SMA", "Mahasiswa", "Umum"];
+  const CATEGORIES = ["Kindergarten", "Elementary", "Middle School", "High School", "University", "General"];
 
   const toggleCategory = (cat: string) => {
     setCategories(prev => prev.includes(cat) ? prev.filter(c => c !== cat) : [...prev, cat]);
@@ -624,7 +625,31 @@ export default function EditCompetitionPage() {
   };
 
   if (isLoading) {
-    return <div className="p-8 flex justify-center">Loading...</div>;
+    return (
+      <div className="w-full pb-12 relative">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <Skeleton className="h-4 w-32 mb-2" />
+            <Skeleton className="h-8 w-16" />
+          </div>
+          <Skeleton className="h-10 w-20 rounded-md" />
+        </div>
+        <div className="space-y-8 bg-zinc-900/40 border border-zinc-800 p-8 rounded-xl shadow-xl">
+          <div className="space-y-4">
+            <Skeleton className="h-4 w-24" />
+            <Skeleton className="h-10 w-full" />
+          </div>
+          <div className="space-y-4">
+            <Skeleton className="h-4 w-24" />
+            <Skeleton className="h-10 w-full" />
+          </div>
+          <div className="space-y-4">
+            <Skeleton className="h-4 w-24" />
+            <Skeleton className="h-[200px] w-full" />
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -648,7 +673,7 @@ export default function EditCompetitionPage() {
       <div className="flex items-center justify-between mb-8">
         <div>
           <div className="flex items-center text-sm text-zinc-400 mb-1">
-            <Link href="/competitions" className="hover:text-zinc-900 dark:text-white transition-colors">Kompetisi</Link>
+            <Link href="/competitions" className="hover:text-zinc-900 dark:text-white transition-colors">Competitions</Link>
             <ChevronRight className="w-4 h-4 mx-1" />
             <span className="text-zinc-900 dark:text-white">Edit</span>
           </div>
@@ -661,11 +686,11 @@ export default function EditCompetitionPage() {
 
         {/* Title */}
         <div className="space-y-2">
-          <Label className="text-zinc-400 text-xs font-semibold">Judul<span className="text-red-500">*</span></Label>
+          <Label className="text-zinc-400 text-xs font-semibold">Title<span className="text-red-500">*</span></Label>
           <Input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="Cth: Cerdas Cermat Online - Sains"
+            placeholder="E.g. Online Quiz - Science"
             className="bg-zinc-50 dark:bg-[#121212] border-zinc-200 dark:border-white/10 text-zinc-900 dark:text-white placeholder:text-zinc-600 focus-visible:ring-[#00e599]"
             required
           />
@@ -673,7 +698,7 @@ export default function EditCompetitionPage() {
 
         {/* Location */}
         <div className="space-y-2 z-50">
-          <Label className="text-zinc-400 text-xs font-semibold">Lokasi<span className="text-red-500">*</span></Label>
+          <Label className="text-zinc-400 text-xs font-semibold">Location<span className="text-red-500">*</span></Label>
           <LocationInput
             value={location}
             onChange={setLocation}
@@ -683,7 +708,7 @@ export default function EditCompetitionPage() {
 
         {/* Description */}
         <div className="space-y-2">
-          <Label className="text-zinc-400 text-xs font-semibold">Deskripsi</Label>
+          <Label className="text-zinc-400 text-xs font-semibold">Description</Label>
           <RichTextEditor
             content={description}
             onChange={setDescription}
@@ -693,7 +718,7 @@ export default function EditCompetitionPage() {
 
         {/* Rules (with rich text toolbar) */}
         <div className="space-y-2">
-          <Label className="text-zinc-400 text-xs font-semibold">Aturan</Label>
+          <Label className="text-zinc-400 text-xs font-semibold">Rules</Label>
           <RichTextEditor
             content={rules}
             onChange={setRules}
@@ -738,11 +763,11 @@ export default function EditCompetitionPage() {
             {/* Right */}
             <div className="space-y-6 flex flex-col justify-between">
               <div className="space-y-3">
-                <Label className="text-zinc-400 text-xs font-semibold">Jadwal<span className="text-red-500">*</span></Label>
+                <Label className="text-zinc-400 text-xs font-semibold">Schedule<span className="text-red-500">*</span></Label>
                 <div className="p-4 bg-zinc-50 dark:bg-[#121212] border border-zinc-200 dark:border-white/10 rounded-xl shadow-sm space-y-4">
                   {/* REGISTRATION */}
                   <div className="space-y-2">
-                    <Label className="text-zinc-500 text-[10px] uppercase font-bold tracking-wider flex items-center">Registrasi<span className="text-red-500 ml-1">*</span>
+                    <Label className="text-zinc-500 text-[10px] uppercase font-bold tracking-wider flex items-center">Registration<span className="text-red-500 ml-1">*</span>
                     </Label>
                     <div className="flex items-center gap-2">
                       <Input
@@ -763,7 +788,7 @@ export default function EditCompetitionPage() {
 
                   {/* QUALIFICATION */}
                   <div className="space-y-2">
-                    <Label className="text-zinc-500 text-[10px] uppercase font-bold tracking-wider flex items-center">Kualifikasi<span className="text-red-500 ml-1">*</span>
+                    <Label className="text-zinc-500 text-[10px] uppercase font-bold tracking-wider flex items-center">Qualification<span className="text-red-500 ml-1">*</span>
                     </Label>
                     <div className="flex items-center gap-2">
                       <Input
@@ -806,7 +831,7 @@ export default function EditCompetitionPage() {
               </div>
 
               <div className="space-y-2">
-                <Label className="text-zinc-400 text-xs font-semibold">Kategori</Label>
+                <Label className="text-zinc-400 text-xs font-semibold">Category</Label>
                 <Dialog open={isCategoryOpen} onOpenChange={setIsCategoryOpen}>
                   <DialogTrigger className="flex items-center gap-3 p-3 w-full bg-zinc-50 dark:bg-[#121212] border border-zinc-200 dark:border-white/10 rounded-md cursor-pointer hover:border-purple-500/50 transition-colors text-left">
                     <Tags className="w-5 h-5 text-purple-500 shrink-0" />
@@ -817,7 +842,7 @@ export default function EditCompetitionPage() {
                   <DialogContent className="bg-white dark:bg-[#1a1a1a] border-zinc-200 dark:border-white/10 text-zinc-900 dark:text-white sm:max-w-[425px]">
                     <DialogHeader>
                       <DialogTitle className="flex items-center gap-2 text-lg">
-                        <Tags className="w-5 h-5 text-purple-500" />Kategori</DialogTitle>
+                        <Tags className="w-5 h-5 text-purple-500" />Category</DialogTitle>
                     </DialogHeader>
                     <div className="grid grid-cols-2 gap-3 py-4">
                       {CATEGORIES.map(cat => (
@@ -834,7 +859,7 @@ export default function EditCompetitionPage() {
                       ))}
                     </div>
                     <div className="flex justify-end mt-4">
-                      <Button type="button" onClick={() => setIsCategoryOpen(false)} className="bg-[#00e599] hover:bg-[#00c987] text-zinc-900">Selesai</Button>
+                      <Button type="button" onClick={() => setIsCategoryOpen(false)} className="bg-[#00e599] hover:bg-[#00c987] text-zinc-900">Completed</Button>
                     </div>
                   </DialogContent>
                 </Dialog>
@@ -852,8 +877,8 @@ export default function EditCompetitionPage() {
                     <SelectValue placeholder="Status" />
                   </SelectTrigger>
                   <SelectContent className="bg-white dark:bg-[#1a1a1a] border-zinc-200 dark:border-white/10 text-zinc-900 dark:text-white">
-                    <SelectItem value="draft">Draf</SelectItem>
-                    <SelectItem value="publish">Terbitkan</SelectItem>
+                    <SelectItem value="draft">Draft</SelectItem>
+                    <SelectItem value="publish">Publish</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -862,7 +887,7 @@ export default function EditCompetitionPage() {
             </div>
 
             <div className="space-y-2 relative">
-              <Label className="text-zinc-400 text-xs font-semibold">Bidang Lomba</Label>
+              <Label className="text-zinc-400 text-xs font-semibold">Subject</Label>
               <div
                 className="flex flex-wrap gap-2 p-2 bg-zinc-50 dark:bg-[#121212] border border-zinc-200 dark:border-white/10 rounded-md focus-within:ring-1 focus-within:border-[#00e599] transition-all cursor-text min-h-[42px]"
                 onClick={() => document.getElementById("subject-input")?.focus()}
@@ -946,7 +971,7 @@ export default function EditCompetitionPage() {
           {/* Row 3: Registration Link (Left) & Fee + Total Prize (Right) */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
             <div className="space-y-2">
-              <Label className="text-zinc-400 text-xs font-semibold">Link Registrasi</Label>
+              <Label className="text-zinc-400 text-xs font-semibold">Registration Link</Label>
               <Input
                 placeholder="https://..."
                 className="bg-zinc-50 dark:bg-[#121212] border-zinc-200 dark:border-white/10 text-zinc-900 dark:text-white placeholder:text-zinc-600 focus-visible:ring-[#00e599]"
@@ -955,11 +980,11 @@ export default function EditCompetitionPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
               <div className="space-y-2">
-                <Label className="text-zinc-400 text-xs font-semibold">Total Hadiah</Label>
+                <Label className="text-zinc-400 text-xs font-semibold">Total Prize</Label>
                 <div className="relative">
                   <Input
                     type="text"
-                    placeholder="Total Keseluruhan"
+                    placeholder="Total Overall"
                     value={totalPrize}
                     onChange={(e) => {
                       const numericString = e.target.value.replace(/\D/g, "");
@@ -990,7 +1015,7 @@ export default function EditCompetitionPage() {
         {categories.length > 0 && (
           <div className="space-y-4 mt-6 border-t border-zinc-200 dark:border-white/5 pt-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <Label className="text-zinc-300 text-sm font-semibold">Alokasi Hadiah</Label>
+              <Label className="text-zinc-300 text-sm font-semibold">Prize Allocation</Label>
               {subjects.length > 0 && (
                 <div className="flex items-center gap-2">
                   <Checkbox
@@ -999,7 +1024,7 @@ export default function EditCompetitionPage() {
                     onCheckedChange={(c) => setIsSplitBySubject(c as boolean)}
                     className="border-zinc-300 dark:border-white/20 data-[state=checked]:bg-[#00e599] data-[state=checked]:text-zinc-900 w-4 h-4"
                   />
-                  <Label htmlFor="split-subject" className="text-zinc-400 text-xs font-semibold cursor-pointer">Pisahkan per Bidang</Label>
+                  <Label htmlFor="split-subject" className="text-zinc-400 text-xs font-semibold cursor-pointer">Separate by Subject</Label>
                 </div>
               )}
             </div>
@@ -1011,30 +1036,30 @@ export default function EditCompetitionPage() {
 
                   <div className="grid grid-cols-1 gap-3">
                     <div className="flex items-center gap-3">
-                      <Badge className="bg-yellow-500/20 text-yellow-500 hover:bg-yellow-500/30 border-none w-20 py-1.5 justify-center text-xs font-bold shadow-sm">Juara 1</Badge>
+                      <Badge className="bg-yellow-500/20 text-yellow-500 hover:bg-yellow-500/30 border-none w-20 py-1.5 justify-center text-xs font-bold shadow-sm">1st Place</Badge>
                       <Input
                         type="text"
-                        placeholder="Rp / Hadiah"
+                        placeholder="Rp / Prize"
                         value={allocationPrizes[key]?.rank1 || ""}
                         onChange={(e) => handleAllocationChange(key, 'rank1', e.target.value)}
                         className="bg-zinc-50 dark:bg-[#121212] border-zinc-200 dark:border-white/10 text-zinc-900 dark:text-white placeholder:text-zinc-600 focus-visible:ring-yellow-500 h-10 text-sm shadow-inner"
                       />
                     </div>
                     <div className="flex items-center gap-3">
-                      <Badge className="bg-zinc-300/20 text-zinc-300 hover:bg-zinc-300/30 border-none w-20 py-1.5 justify-center text-xs font-bold shadow-sm">Juara 2</Badge>
+                      <Badge className="bg-zinc-300/20 text-zinc-300 hover:bg-zinc-300/30 border-none w-20 py-1.5 justify-center text-xs font-bold shadow-sm">2nd Place</Badge>
                       <Input
                         type="text"
-                        placeholder="Rp / Hadiah"
+                        placeholder="Rp / Prize"
                         value={allocationPrizes[key]?.rank2 || ""}
                         onChange={(e) => handleAllocationChange(key, 'rank2', e.target.value)}
                         className="bg-zinc-50 dark:bg-[#121212] border-zinc-200 dark:border-white/10 text-zinc-900 dark:text-white placeholder:text-zinc-600 focus-visible:ring-zinc-400 h-10 text-sm shadow-inner"
                       />
                     </div>
                     <div className="flex items-center gap-3">
-                      <Badge className="bg-orange-700/20 text-orange-500 hover:bg-orange-700/30 border-none w-20 py-1.5 justify-center text-xs font-bold shadow-sm">Juara 3</Badge>
+                      <Badge className="bg-orange-700/20 text-orange-500 hover:bg-orange-700/30 border-none w-20 py-1.5 justify-center text-xs font-bold shadow-sm">3rd Place</Badge>
                       <Input
                         type="text"
-                        placeholder="Rp / Hadiah"
+                        placeholder="Rp / Prize"
                         value={allocationPrizes[key]?.rank3 || ""}
                         onChange={(e) => handleAllocationChange(key, 'rank3', e.target.value)}
                         className="bg-zinc-50 dark:bg-[#121212] border-zinc-200 dark:border-white/10 text-zinc-900 dark:text-white placeholder:text-zinc-600 focus-visible:ring-orange-500 h-10 text-sm shadow-inner"
@@ -1049,10 +1074,10 @@ export default function EditCompetitionPage() {
 
         {/* Registration Fee Section */}
         <div className="space-y-2 mt-6 border-t border-zinc-200 dark:border-white/5 pt-6">
-          <Label className="text-zinc-400 text-xs font-semibold">Biaya Pendaftaran</Label>
+          <Label className="text-zinc-400 text-xs font-semibold">Registration Fee</Label>
           <Input
             type="text"
-            placeholder="Rp 0 (Gratis)"
+            placeholder="Rp 0 (Free)"
             value={fee}
             onChange={(e) => {
               const numericString = e.target.value.replace(/\D/g, "");
@@ -1070,7 +1095,7 @@ export default function EditCompetitionPage() {
 
         {/* Configuration Section Requested by User */}
         <div className="pt-6 mt-6 border-t border-zinc-200 dark:border-white/5">
-          <h3 className="text-lg font-semibold mb-6 text-zinc-900 dark:text-white tracking-tight">Konfigurasi Turnamen</h3>
+          <h3 className="text-lg font-semibold mb-6 text-zinc-900 dark:text-white tracking-tight">Tournament Configuration</h3>
 
           <div className="space-y-8">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-6">
@@ -1085,11 +1110,11 @@ export default function EditCompetitionPage() {
                     onCheckedChange={(c) => setIsLimit(c as boolean)}
                     className="border-zinc-300 dark:border-white/20 data-[state=checked]:bg-[#00e599] data-[state=checked]:text-zinc-900"
                   />
-                  <Label htmlFor="limit" className="text-zinc-400 text-xs font-semibold cursor-pointer">Atur Batas Peserta</Label>
+                  <Label htmlFor="limit" className="text-zinc-400 text-xs font-semibold cursor-pointer">Set Participant Limit</Label>
                 </div>
                 <Input
                   type="number"
-                  placeholder={!isLimit ? "Peserta Tidak Terbatas" : "e.g. 64"}
+                  placeholder={!isLimit ? "Unlimited Participants" : "e.g. 64"}
                   disabled={!isLimit}
                   value={maxParticipants || ""}
                   onChange={(e) => setMaxParticipants(parseInt(e.target.value) || null)}
@@ -1132,7 +1157,7 @@ export default function EditCompetitionPage() {
         {/* Functional Bracket Preview */}
         <div className="pt-6 mt-6 border-t border-zinc-200 dark:border-white/5">
           <div className="mb-6">
-            <h3 className="text-lg font-semibold text-zinc-900 dark:text-white tracking-tight">Braket</h3>
+            <h3 className="text-lg font-semibold text-zinc-900 dark:text-white tracking-tight">Bracket</h3>
           </div>
           <div className="border border-zinc-200 dark:border-white/10 rounded-xl bg-zinc-50 dark:bg-[#121212] overflow-hidden min-h-[300px] flex items-center justify-center p-8">
             <StaticLiquipediaBracket />

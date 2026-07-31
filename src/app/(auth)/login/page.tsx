@@ -116,7 +116,7 @@ export default function LoginPage() {
                   Memproses...
                 </>
               ) : (
-                'Masuk'
+                'Login'
               )}
             </Button>
           </CardFooter>

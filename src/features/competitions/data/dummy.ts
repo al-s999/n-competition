@@ -60,11 +60,11 @@ export const DUMMY_COMPETITIONS: Competition[] = [
       { id: 'cat-3', name: 'SMA/SMK/MA' }
     ],
     subjects: [
-      { id: 'sub-1', name: 'Matematika' },
+      { id: 'sub-1', name: 'Mathematics' },
       { id: 'sub-2', name: 'IPA' },
-      { id: 'sub-3', name: 'Fisika' },
-      { id: 'sub-4', name: 'Kimia' },
-      { id: 'sub-5', name: 'Biologi' }
+      { id: 'sub-3', name: 'Physics' },
+      { id: 'sub-4', name: 'Chemistry' },
+      { id: 'sub-5', name: 'Biology' }
     ],
     
     registration_fees: [

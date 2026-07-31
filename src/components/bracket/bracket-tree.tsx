@@ -33,20 +33,20 @@ function normalizePhase(phase?: string): string {
 }
 
 function extractCategory(m: Match): string {
-  let cat = "Umum";
+  let cat = "General";
   if (m.category && m.category.trim()) {
     cat = m.category.trim();
   } else {
     const src = m.title || "";
     const patterns: [RegExp, string][] = [
-      [/SD\/MI/i, "SD"],
-      [/SMA\/SMK\/MA/i, "SMA"],
-      [/SMP\/MTs/i, "SMP"],
-      [/Mahasiswa/i, "Mahasiswa"],
-      [/Umum/i, "Umum"],
+      [/SD\/MI/i, "Elementary"],
+      [/SMA\/SMK\/MA/i, "High School"],
+      [/SMP\/MTs/i, "Middle School"],
+      [/Mahasiswa/i, "University"],
+      [/Umum/i, "General"],
       [/Guru/i, "Guru"],
       [/Santri/i, "Santri"],
-      [/TK/i, "TK"],
+      [/TK/i, "Kindergarten"],
     ];
     for (const [re, label] of patterns) {
       if (re.test(src)) {
@@ -239,7 +239,7 @@ export function BracketTree({ matches, participants, adminMode = false, onMatchC
     categoriesMap.get(cat)!.push(m);
   });
 
-  const CATEGORY_ORDER = ["SD", "SMP", "SMA", "Mahasiswa", "Umum"];
+  const CATEGORY_ORDER = ["Elementary", "Middle School", "High School", "University", "General"];
   const categories = Array.from(categoriesMap.keys()).sort((a, b) => {
     const ia = CATEGORY_ORDER.indexOf(a);
     const ib = CATEGORY_ORDER.indexOf(b);

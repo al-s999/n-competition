@@ -107,39 +107,35 @@ export function ManageCompetitionsClient() {
             </SelectContent>
           </Select>
 
-          {availableCategories.length > 0 && (
-            <Select value={categoryFilter} onValueChange={handleCategoryFilterChange}>
-              <SelectTrigger className="w-[160px] shrink-0 bg-background border-border">
-                <div className="flex items-center gap-2 text-sm text-muted-foreground whitespace-nowrap truncate">
-                  <SlidersHorizontal className="h-3.5 w-3.5 hidden sm:block" />
-                  <SelectValue placeholder="Category" />
-                </div>
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Categories</SelectItem>
-                {availableCategories.map(cat => (
-                  <SelectItem key={cat} value={cat}>{cat}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          )}
+          <Select value={categoryFilter} onValueChange={handleCategoryFilterChange}>
+            <SelectTrigger className="w-[160px] shrink-0 bg-background border-border">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground whitespace-nowrap truncate">
+                <SlidersHorizontal className="h-3.5 w-3.5 hidden sm:block" />
+                <SelectValue placeholder="Category" />
+              </div>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Categories</SelectItem>
+              {availableCategories.map(cat => (
+                <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
 
-          {availableLocations.length > 0 && (
-            <Select value={locationFilter} onValueChange={handleLocationFilterChange}>
-              <SelectTrigger className="w-[160px] shrink-0 bg-background border-border">
-                <div className="flex items-center gap-2 text-sm text-muted-foreground whitespace-nowrap truncate">
-                  <SlidersHorizontal className="h-3.5 w-3.5 hidden sm:block" />
-                  <SelectValue placeholder="Location" />
-                </div>
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Locations</SelectItem>
-                {availableLocations.map(loc => (
-                  <SelectItem key={loc} value={loc}>{loc}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          )}
+          <Select value={locationFilter} onValueChange={handleLocationFilterChange}>
+            <SelectTrigger className="w-[160px] shrink-0 bg-background border-border">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground whitespace-nowrap truncate">
+                <SlidersHorizontal className="h-3.5 w-3.5 hidden sm:block" />
+                <SelectValue placeholder="Location" />
+              </div>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Locations</SelectItem>
+              {availableLocations.map(loc => (
+                <SelectItem key={loc} value={loc}>{loc}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           {/* Collapse/Expand toggle — mobile only */}
           <Button
             variant="outline"

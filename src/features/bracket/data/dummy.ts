@@ -1,7 +1,7 @@
 import { Stage, Match } from './types';
 
 export const DUMMY_STAGES: Stage[] = [
-  { id: 's1', competition_id: 'c1', type: 'qualification', name: 'Kualifikasi' },
+  { id: 's1', competition_id: 'c1', type: 'qualification', name: 'Qualification' },
   { id: 's2', competition_id: 'c1', type: 'knockout', name: 'Semifinal' },
   { id: 's3', competition_id: 'c1', type: 'knockout', name: 'Final' },
 ];

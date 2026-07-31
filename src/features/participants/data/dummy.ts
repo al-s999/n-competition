@@ -1,7 +1,7 @@
 import { Participant } from './types';
 
-const indonesianCategories = ["TK", "SD/MI", "SMP/MTs", "SMA/SMK/MA", "Mahasiswa"];
-const subjectsList = ["Matematika", "Sains", "Bahasa Inggris"];
+const indonesianCategories = ["Kindergarten", "SD/MI", "SMP/MTs", "SMA/SMK/MA", "University"];
+const subjectsList = ["Mathematics", "Science", "English"];
 let pCounter = 0;
 
 const generateDummyParticipant = (id: string, name: string, email: string, status: Participant['status'], isFinalist = false): Participant => {

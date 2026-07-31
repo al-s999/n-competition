@@ -20,6 +20,7 @@ import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { CompetitionService } from "@/features/competitions/data/service";
 import { ParticipantService } from "@/features/participants/data/service";
@@ -78,14 +79,14 @@ export default function ReceptionistClient({ compId: propCompId }: { compId: str
           username: p.username || p.name.toLowerCase().replace(/\s/g, ''),
           avatar_url: p.avatar || null,
           attended: p.is_present || false,
-          category: p.category || "Umum",
-          schoolName: p.school_name || "Sekolah Tidak Diketahui",
+          category: p.category || "General",
+          schoolName: p.school_name || "Unknown School",
         };
       });
 
       // Extract unique categories
       const uniqueCats = Array.from(new Set(allParticipants.map(p => p.category)));
-      const categoryOrder = ["TK", "SD/MI", "SMP/MTs", "SMA/SMK/MA", "Mahasiswa"];
+      const categoryOrder = ["Kindergarten", "SD/MI", "SMP/MTs", "SMA/SMK/MA", "University"];
       uniqueCats.sort((a, b) => {
         const indexA = categoryOrder.indexOf(a);
         const indexB = categoryOrder.indexOf(b);
@@ -182,7 +183,34 @@ export default function ReceptionistClient({ compId: propCompId }: { compId: str
   }, [qrDialogOpen]);
 
   if (isLoading) {
-    return <div className="p-8 flex justify-center text-muted-foreground">Loading Receptionist View...</div>;
+    return (
+      <div className="p-4 sm:p-6 lg:p-8 space-y-8 pb-20 w-full min-h-screen">
+        <Skeleton className="h-4 w-48" /> {/* Breadcrumb */}
+        
+        <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
+          <div className="space-y-3 flex-1">
+            <Skeleton className="h-10 w-3/4 max-w-md" /> {/* Title */}
+            <Skeleton className="h-6 w-full max-w-sm" /> {/* Stats */}
+          </div>
+          <div className="flex items-center gap-3 w-full md:w-auto">
+            <Skeleton className="h-10 w-10 rounded-md" /> {/* Refresh Btn */}
+            <Skeleton className="h-10 w-24 rounded-md" /> {/* Scan Btn */}
+          </div>
+        </div>
+
+        <div className="space-y-6">
+          <div className="bg-card rounded-xl border shadow-sm p-5 space-y-5">
+            <Skeleton className="h-6 w-32" /> {/* Categories title */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 items-start">
+              <Skeleton className="h-32 rounded-lg" />
+              <Skeleton className="h-32 rounded-lg" />
+              <Skeleton className="h-32 rounded-lg" />
+              <Skeleton className="h-32 rounded-lg" />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   if (!competition) {

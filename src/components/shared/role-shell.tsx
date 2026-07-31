@@ -95,15 +95,10 @@ export function RoleShell({ children, navItems, title, subtitle }: RoleShellProp
                   </span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56 mt-1">
-                <DropdownMenuLabel className="flex flex-col space-y-1">
-                  <span className="text-sm font-medium leading-none">Profil</span>
-                  <span className="text-xs font-normal text-muted-foreground">{user?.email}</span>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => logout()} className="text-destructive focus:bg-destructive/10 focus:text-destructive cursor-pointer">
+              <DropdownMenuContent align="end" className="w-40 mt-1 p-2">
+                <DropdownMenuItem onClick={() => logout()} className="bg-red-500 text-white focus:bg-red-600 focus:text-white hover:bg-red-600 cursor-pointer py-2.5 font-bold shadow-sm transition-colors rounded-md flex items-center justify-center">
                   <LogOut className="mr-2 h-4 w-4" />
-                  <span>Keluar</span>
+                  <span>Logout</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

@@ -30,17 +30,17 @@ function getMatchCategoryOnly(m: any): string {
     [/SD\/MI/i, "SD/MI"],
     [/SMA\/SMK\/MA/i, "SMA/SMK/MA"],
     [/SMP\/MTs/i, "SMP/MTs"],
-    [/Mahasiswa/i, "Mahasiswa"],
-    [/Umum/i, "Umum"],
+    [/Mahasiswa/i, "University"],
+    [/Umum/i, "General"],
     [/Santri/i, "Santri"],
-    [/TK/i, "TK"],
+    [/TK/i, "Kindergarten"],
   ];
   for (const [re, label] of patterns) {
     if (re.test(src)) {
       return label;
     }
   }
-  return "Umum";
+  return "General";
 }
 
 function getMatchSubjectOnly(m: any): string {

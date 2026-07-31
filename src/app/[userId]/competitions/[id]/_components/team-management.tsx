@@ -13,6 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { useActiveContext } from "@/hooks/use-active-context";
 
@@ -253,9 +254,9 @@ export function TeamManagement({ competitionId }: { competitionId: string }) {
               </div>
 
               <DialogFooter className="p-6 pt-2 border-t">
-                <Button variant="outline" onClick={() => setIsAddModalOpen(false)} disabled={isSubmitting}>Batal</Button>
+                <Button variant="outline" onClick={() => setIsAddModalOpen(false)} disabled={isSubmitting}>Cancel</Button>
                 <Button onClick={handleAddMember} disabled={isSubmitting || !selectedUserId}>
-                  {isSubmitting ? "Menyimpan..." : "Simpan"}
+                  {isSubmitting ? "Saving..." : "Save"}
                 </Button>
               </DialogFooter>
             </DialogContent>
@@ -267,16 +268,31 @@ export function TeamManagement({ competitionId }: { competitionId: string }) {
         <Table>
           <TableHeader>
             <TableRow className="border-b bg-muted/20 text-xs text-muted-foreground">
-              <TableHead className="px-4 py-3 font-medium">Pengguna</TableHead>
+              <TableHead className="px-4 py-3 font-medium">Users</TableHead>
               <TableHead className="px-4 py-3 font-medium">Peran</TableHead>
-              {!isReadOnly && <TableHead className="px-4 py-3 text-right font-medium">Aksi</TableHead>}
+              {!isReadOnly && <TableHead className="px-4 py-3 text-right font-medium">Action</TableHead>}
             </TableRow>
           </TableHeader>
           <TableBody>
             {isLoading ? (
-              <TableRow>
-                <TableCell colSpan={isReadOnly ? 2 : 3} className="text-center h-24 text-sm text-muted-foreground">Loading data...</TableCell>
-              </TableRow>
+              Array.from({ length: 3 }).map((_, i) => (
+                <TableRow key={i}>
+                  <TableCell className="px-4 py-3">
+                    <div className="flex flex-col gap-2">
+                      <Skeleton className="h-4 w-32" />
+                      <Skeleton className="h-3 w-48" />
+                    </div>
+                  </TableCell>
+                  <TableCell className="px-4 py-3">
+                    <Skeleton className="h-6 w-20 rounded-full" />
+                  </TableCell>
+                  {!isReadOnly && (
+                    <TableCell className="px-4 py-3 text-right">
+                      <Skeleton className="h-8 w-16 ml-auto rounded-md" />
+                    </TableCell>
+                  )}
+                </TableRow>
+              ))
             ) : members.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={isReadOnly ? 2 : 3} className="text-center h-24 text-sm text-muted-foreground">Belum ada tim yang ditugaskan di kompetisi ini.</TableCell>
@@ -296,7 +312,7 @@ export function TeamManagement({ competitionId }: { competitionId: string }) {
                   {!isReadOnly && (
                     <TableCell className="px-4 py-3 text-right">
                       <Button variant="ghost" size="sm" onClick={() => handleDeleteMember(m.id)} className="h-8 text-xs text-destructive hover:text-destructive hover:bg-destructive/10">
-                        Hapus
+                        Delete
                       </Button>
                     </TableCell>
                   )}

@@ -12,6 +12,7 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { CompetitionService } from "@/features/competitions/data/service";
 import { ParticipantService } from "@/features/participants/data/service";
@@ -200,7 +201,30 @@ export default function CompetitionClient() {
   }
 
   if (isLoading) {
-    return <div className="p-8 flex justify-center">"Loading"...</div>;
+    return (
+      <div className="w-full p-6 space-y-6">
+        <Skeleton className="h-4 w-48" /> {/* Breadcrumb */}
+        
+        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+          <div className="space-y-4 min-w-0 flex-1">
+            <Skeleton className="h-10 w-3/4 max-w-md" /> {/* Title */}
+            <div className="flex items-center gap-x-3 gap-y-2 flex-wrap">
+              <Skeleton className="h-6 w-20 rounded-full" /> {/* Badge */}
+              <Skeleton className="h-5 w-32" /> {/* Registered */}
+              <Skeleton className="h-5 w-40" /> {/* Paid */}
+              <Skeleton className="h-5 w-64" /> {/* Dates */}
+            </div>
+          </div>
+          <Skeleton className="h-10 w-24 shrink-0" /> {/* Edit button */}
+        </div>
+
+        <Skeleton className="h-10 w-full max-w-2xl mt-4" /> {/* Tabs List */}
+        
+        <div className="mt-6">
+          <Skeleton className="h-[400px] w-full rounded-xl" /> {/* Tab Content */}
+        </div>
+      </div>
+    );
   }
 
   if (!detail) {
@@ -442,7 +466,7 @@ export default function CompetitionClient() {
             <PhaseStandings
               groups={groups}
               finalists={players.filter(p => p.isFinalist)}
-              categories={detail?.categories?.length > 0 ? detail.categories.map((c: any) => typeof c === 'string' ? c : c.name || "Unknown") : (detail?.category ? detail.category.split(",").map((s: string) => s.trim()).filter(Boolean) : ["TK", "SD/MI", "SMP/MTs", "SMA/SMK/MA", "Mahasiswa"])}
+              categories={detail?.categories?.length > 0 ? detail.categories.map((c: any) => typeof c === 'string' ? c : c.name || "Unknown") : (detail?.category ? detail.category.split(",").map((s: string) => s.trim()).filter(Boolean) : ["Kindergarten", "SD/MI", "SMP/MTs", "SMA/SMK/MA", "University"])}
               showBracket={false}
             />
           </TabsContent>
@@ -453,7 +477,7 @@ export default function CompetitionClient() {
               groups={groups}
               quizzes={[]}
               games={[]}
-              categories={detail?.categories?.length > 0 ? detail.categories.map((c: any) => typeof c === 'string' ? c : c.name || "Unknown") : (detail?.category ? detail.category.split(",").map((s: string) => s.trim()).filter(Boolean) : ["TK", "SD/MI", "SMP/MTs", "SMA/SMK/MA", "Mahasiswa"])}
+              categories={detail?.categories?.length > 0 ? detail.categories.map((c: any) => typeof c === 'string' ? c : c.name || "Unknown") : (detail?.category ? detail.category.split(",").map((s: string) => s.trim()).filter(Boolean) : ["Kindergarten", "SD/MI", "SMP/MTs", "SMA/SMK/MA", "University"])}
               onGroupsChange={setGroups}
               showGroupStageHeader={false}
               showBracket={true}
@@ -463,7 +487,7 @@ export default function CompetitionClient() {
             <PhaseChampion
               groups={groups}
               finalists={players.filter(p => p.isFinalist)}
-              categories={detail?.categories?.length > 0 ? detail.categories.map((c: any) => typeof c === 'string' ? c : c.name || "Unknown") : (detail?.category ? detail.category.split(",").map((s: string) => s.trim()).filter(Boolean) : ["TK", "SD/MI", "SMP/MTs", "SMA/SMK/MA", "Mahasiswa"])}
+              categories={detail?.categories?.length > 0 ? detail.categories.map((c: any) => typeof c === 'string' ? c : c.name || "Unknown") : (detail?.category ? detail.category.split(",").map((s: string) => s.trim()).filter(Boolean) : ["Kindergarten", "SD/MI", "SMP/MTs", "SMA/SMK/MA", "University"])}
             />
           </TabsContent>
         </div>

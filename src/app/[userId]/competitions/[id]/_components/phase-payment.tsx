@@ -422,7 +422,7 @@ export function PhasePayment({
         open={!!paymentToggleDialog}
         onOpenChange={(open: boolean) => !open && setPaymentToggleDialog(null)}
         title="Ubah Status Pembayaran"
-        description={`$"Apakah Anda yakin ingin mengubah status pembayaran untuk" ${paymentToggleDialog?.name} $"menjadi" ${!paymentToggleDialog?.paid ? ("Lunas") : ("Belum Lunas")}?`}
+        description={`$"Apakah Anda yakin ingin mengubah status pembayaran untuk" ${paymentToggleDialog?.name} $"menjadi" ${!paymentToggleDialog?.paid ? ("Paid") : ("Belum Lunas")}?`}
         onConfirm={() => {
           if (paymentToggleDialog) {
             onTogglePayment(paymentToggleDialog.id);
@@ -430,7 +430,7 @@ export function PhasePayment({
           }
         }}
         confirmText="Ubah"
-        cancelText="Batal"
+        cancelText="Cancel"
       />
 
       <Dialog open={!!selectedPlayerForSessions} onOpenChange={(open: boolean) => !open && setSelectedPlayerForSessions(null)}>
