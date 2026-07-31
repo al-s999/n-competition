@@ -1,0 +1,74 @@
+create table public.competition_participants (
+  id character varying(20) not null,
+  competition_id character varying(20) null,
+  user_id character varying(20) not null,
+  is_paid boolean null default false,
+  registered_at timestamp with time zone null default now(),
+  category text null,
+  is_finalist boolean null default false,
+  constraint competition_participants_pkey primary key (id),
+  constraint competition_participants_competition_id_user_id_key unique (competition_id, user_id),
+  constraint competition_participants_competition_id_fkey foreign KEY (competition_id) references competitions (id) on delete CASCADE
+) TABLESPACE pg_default;
+
+
+create table public.competition_groups (
+  id text not null,
+  name text not null,
+  rounds jsonb null default '[]'::jsonb,
+  created_at timestamp with time zone not null default now(),
+  competition_id text null,
+  stage text null,
+  source_group_ids text[] null,
+  constraint competition_groups_pkey primary key (id)
+) TABLESPACE pg_default;
+
+create table public.competition_group_members (
+  id text not null,
+  group_id text not null,
+  participant_id text not null,
+  score numeric not null default 0,
+  is_advanced boolean not null default false,
+  created_at timestamp with time zone not null default now(),
+  time_seconds integer null default 0,
+  constraint competition_group_members_pkey primary key (id),
+  constraint competition_group_members_group_id_fkey foreign KEY (group_id) references competition_groups (id) on delete CASCADE
+) TABLESPACE pg_default;
+
+create index IF not exists idx_competition_group_members_group_id on public.competition_group_members using btree (group_id) TABLESPACE pg_default;
+
+
+create table public.competition_categories (
+  id text not null default generate_xid (),
+  name text not null,
+  status text null default 'active'::text,
+  created_at timestamp with time zone null default (now() AT TIME ZONE 'utc'::text),
+  updated_at timestamp with time zone null default (now() AT TIME ZONE 'utc'::text),
+  constraint competition_categories_pkey primary key (id)
+) TABLESPACE pg_default;
+
+
+create table public.competitions (
+  id character varying(20) not null,
+  title text not null,
+  slug text not null,
+  description text null,
+  rules text[] null,
+  registration_start_date timestamp with time zone not null,
+  registration_end_date timestamp with time zone not null,
+  poster_url text null,
+  status text null default 'draft'::text,
+  registration_fee text null,
+  prize_pool text null,
+  registration_link text null,
+  created_at timestamp with time zone null default now(),
+  created_by character varying(20) null,
+  qualification_start_date timestamp with time zone null,
+  qualification_end_date timestamp with time zone null,
+  final_start_date timestamp with time zone null,
+  final_end_date timestamp with time zone null,
+  category text null,
+  winners jsonb null default '{}'::jsonb,
+  constraint competitions_pkey primary key (id),
+  constraint competitions_slug_key unique (slug)
+) TABLESPACE pg_default;

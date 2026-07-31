@@ -1,0 +1,7 @@
+.env
+.agents
+.next/
+node_modules/.next/
+node_modules/
+dist/
+build/

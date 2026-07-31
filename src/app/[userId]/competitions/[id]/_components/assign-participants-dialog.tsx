@@ -1,0 +1,149 @@
+"use client";
+
+import { useState } from "react";
+import { getScoreTextClass } from "@/lib/utils";
+import { DummyPlayer } from "@/types/competition";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Search, UserPlus } from "lucide-react";
+
+interface AssignParticipantsDialogProps {
+  isOpen: boolean;
+  onClose: () => void;
+  players: DummyPlayer[];
+  alreadyAssigned: string[];
+  onAssign: (playerIds: string[]) => void;
+  groupName: string;
+}
+
+export function AssignParticipantsDialog({
+  isOpen,
+  onClose,
+  players,
+  alreadyAssigned,
+  onAssign,
+  groupName,
+}: AssignParticipantsDialogProps) {
+    const [search, setSearch] = useState("");
+  const [selected, setSelected] = useState<string[]>([]);
+
+  const available = players
+    .filter((p) => !alreadyAssigned.includes(p.id) && p.name.toLowerCase().includes(search.toLowerCase()))
+    .sort((a, b) => {
+      if (b.gamesPlayed !== a.gamesPlayed) return b.gamesPlayed - a.gamesPlayed;
+      return b.avgScore - a.avgScore;
+    });
+
+  const togglePlayer = (id: string) => {
+    setSelected((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+    );
+  };
+
+  const handleAssign = () => {
+    onAssign(selected);
+    setSelected([]);
+    setSearch("");
+    onClose();
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={(open) => { if (!open) { onClose(); setSelected([]); setSearch(""); } }}>
+      <DialogContent className="sm:max-w-[480px]">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <UserPlus className="h-5 w-5" />
+            "Assign participants" — {groupName}
+          </DialogTitle>
+        </DialogHeader>
+
+        {/* Search */}
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search player"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="pl-9"
+          />
+        </div>
+
+        {/* Player List */}
+        <div className="max-h-64 overflow-y-auto space-y-1 border rounded-md p-2">
+          {available.length === 0 ? (
+            <p className="text-sm text-muted-foreground text-center py-4">No players found</p>
+          ) : (
+            available.map((player) => {
+              const isSelected = selected.includes(player.id);
+              return (
+                <div
+                  key={player.id}
+                  onClick={() => togglePlayer(player.id)}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      togglePlayer(player.id);
+                    }
+                  }}
+                  className={`w-full flex items-center gap-3 px-3 py-2 rounded-md text-left text-sm transition-colors cursor-pointer ${
+                    isSelected
+                      ? "bg-primary/10 border border-primary/30"
+                      : "hover:bg-muted/50"
+                  }`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={isSelected}
+                    readOnly
+                    className="h-4 w-4 rounded border-border accent-primary"
+                  />
+                  <Avatar className="h-7 w-7">
+                    <AvatarImage src={player.avatar || ""} alt={player.name} className="object-cover" />
+                    <AvatarFallback className="text-[10px]">
+                      {player.name.substring(0, 2).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium truncate leading-tight">{player.name}</p>
+                    <div className="flex items-center gap-1.5 mt-0.5">
+                      <p className="text-[10px] text-muted-foreground truncate leading-tight">@{player.username || player.name.toLowerCase().replace(/\s+/g, '')}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 shrink-0">
+                    {player.category && (
+                      <Badge variant="outline" className="text-[10px] px-2 h-5 font-medium tracking-wide bg-muted/20 border-muted-foreground/20 text-muted-foreground truncate max-w-[100px]">
+                        {player.category}
+                      </Badge>
+                    )}
+                    <span className={`text-xs whitespace-nowrap font-mono ${getScoreTextClass(player.avgScore)}`}>{player.avgScore.toFixed(1)} <span className="text-[10px]">pts</span></span>
+                  </div>
+                </div>
+              );
+            })
+          )}
+        </div>
+
+        {/* Footer */}
+        <DialogFooter>
+          <p className="text-xs text-muted-foreground mr-auto">
+            {selected.length} "selected"
+          </p>
+          <Button variant="outline" onClick={onClose}>Cancel</Button>
+          <Button onClick={handleAssign} disabled={selected.length === 0} className="gap-1.5">
+            <UserPlus className="h-4 w-4" />Assign participants</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
