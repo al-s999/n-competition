@@ -37,6 +37,7 @@ interface PhaseRegistrationProps {
   totalPlayersCount?: number;
   refreshData?: () => void;
   dbTotalRegistered?: number;
+  categories?: string[];
 }
 
 export function PhaseRegistration({
@@ -45,6 +46,7 @@ export function PhaseRegistration({
   totalPlayersCount,
   refreshData,
   dbTotalRegistered,
+  categories = [],
 }: PhaseRegistrationProps) {
   const [selectedPlayerForSessions, setSelectedPlayerForSessions] = useState<DummyPlayer | null>(null);
 
@@ -56,7 +58,7 @@ export function PhaseRegistration({
   const [subjectFilter, setSubjectFilter] = useState("all");
 
   const isSeparate = competition?.is_split_by_subject === true;
-  const availableCategories = Array.from(new Set(players.map(p => p.category).filter(Boolean))) as string[];
+  const availableCategories = categories.length > 0 ? categories : Array.from(new Set(players.map(p => p.category).filter(Boolean))) as string[];
   const availableSubjects = Array.from(new Set(players.map(p => p.subject).filter(Boolean))) as string[];
 
   const categoryOrder = ["tk", "sd/mi", "smp/mts", "sma/smk/ma", "mahasiswa"];

@@ -39,12 +39,12 @@ function extractCategory(m: Match): string {
   } else {
     const src = m.title || "";
     const patterns: [RegExp, string][] = [
-      [/SD\/MI/i, "Elementary"],
-      [/SMA\/SMK\/MA/i, "High School"],
-      [/SMP\/MTs/i, "Middle School"],
-      [/Mahasiswa/i, "University"],
-      [/Umum/i, "General"],
-      [/TK/i, "Kindergarten"],
+      [/SD\/MI/i, "SD/MI"],
+      [/SMA\/SMK\/MA/i, "SMA/SMK/MA"],
+      [/SMP\/MTs/i, "SMP/MTS"],
+      [/Mahasiswa/i, "Mahasiswa"],
+      [/Umum/i, "Umum"],
+      [/TK/i, "TK"],
     ];
     for (const [re, label] of patterns) {
       if (re.test(src)) {

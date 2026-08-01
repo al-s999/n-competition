@@ -444,6 +444,7 @@ export default function CompetitionClient() {
               totalPlayersCount={players.length}
               refreshData={triggerRefresh}
               dbTotalRegistered={players.length}
+              categories={categories}
             />
           </TabsContent>
           <TabsContent value="payment" className="m-0">
@@ -452,6 +453,7 @@ export default function CompetitionClient() {
               players={players}
               refreshData={triggerRefresh}
               dbTotalPaid={players.filter(p => p.paid).length}
+              categories={categories}
             />
           </TabsContent>
           <TabsContent value="qualification" className="m-0">
@@ -460,6 +462,7 @@ export default function CompetitionClient() {
               players={players}
               refreshData={triggerRefresh}
               dbTotalFinalists={players.filter(p => p.isFinalist).length}
+              categories={categories}
             />
           </TabsContent>
           <TabsContent value="standings" className="m-0">

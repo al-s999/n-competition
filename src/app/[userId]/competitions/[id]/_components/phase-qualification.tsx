@@ -39,6 +39,7 @@ interface PhaseQualificationProps {
   players: DummyPlayer[];
   refreshData?: () => void;
   dbTotalFinalists?: number;
+  categories?: string[];
 }
 
 export function PhaseQualification({
@@ -46,6 +47,7 @@ export function PhaseQualification({
   players,
   refreshData,
   dbTotalFinalists,
+  categories = [],
 }: PhaseQualificationProps) {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [selectedPlayerForSessions, setSelectedPlayerForSessions] = useState<DummyPlayer | null>(null);
@@ -58,7 +60,7 @@ export function PhaseQualification({
   const [subjectFilter, setSubjectFilter] = useState("all");
 
   const isSeparate = competition?.is_split_by_subject === true;
-  const availableCategories = Array.from(new Set(players.map(p => p.category).filter(Boolean))) as string[];
+  const availableCategories = categories.length > 0 ? categories : Array.from(new Set(players.map(p => p.category).filter(Boolean))) as string[];
   const availableSubjects = Array.from(new Set(players.map(p => p.subject).filter(Boolean))) as string[];
 
   const categoryOrder = ["tk", "sd/mi", "smp/mts", "sma/smk/ma", "mahasiswa"];

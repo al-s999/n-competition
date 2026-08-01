@@ -37,6 +37,7 @@ interface PhasePaymentProps {
   players: DummyPlayer[];
   refreshData?: () => void;
   dbTotalPaid?: number;
+  categories?: string[];
 }
 
 export function PhasePayment({
@@ -44,6 +45,7 @@ export function PhasePayment({
   players,
   refreshData,
   dbTotalPaid,
+  categories = [],
 }: PhasePaymentProps) {
   const [paymentToggleDialog, setPaymentToggleDialog] = useState<DummyPlayer | null>(null);
   const [selectedPlayerForSessions, setSelectedPlayerForSessions] = useState<DummyPlayer | null>(null);
@@ -57,7 +59,7 @@ export function PhasePayment({
   const [subjectFilter, setSubjectFilter] = useState("all");
 
   const isSeparate = competition?.is_split_by_subject === true;
-  const availableCategories = Array.from(new Set(players.map(p => p.category).filter(Boolean))) as string[];
+  const availableCategories = categories.length > 0 ? categories : Array.from(new Set(players.map(p => p.category).filter(Boolean))) as string[];
   const availableSubjects = Array.from(new Set(players.map(p => p.subject).filter(Boolean))) as string[];
 
   const categoryOrder = ["tk", "sd/mi", "smp/mts", "sma/smk/ma", "mahasiswa"];
