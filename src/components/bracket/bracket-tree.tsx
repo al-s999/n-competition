@@ -25,7 +25,6 @@ const BRACKET_EXCLUDED_PHASES = ["Qualification"];
 function normalizePhase(phase?: string): string {
   if (!phase) return "Qualification";
   const lower = phase.toLowerCase();
-  if (lower.includes("grand")) return "Grand Final";
   if (lower.includes("semi")) return "Semifinal";   // ← must come before "final" check
   if (lower.includes("final")) return "Final";
   if (lower.includes("qualif")) return "Qualification";

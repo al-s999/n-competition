@@ -246,6 +246,9 @@ export default function CompetitionClient() {
   const totalPaid = players.filter(p => p.paid).length;
   const paidPercentage = totalRegistered > 0 ? Math.round((totalPaid / totalRegistered) * 100) : 0;
 
+  const derivedCategories = detail.categories && Array.isArray(detail.categories) && detail.categories.length > 0
+    ? detail.categories.map((c: any) => typeof c === 'string' ? c : c.name || "Unknown")
+    : (detail.category ? detail.category.split(",").map((s: string) => s.trim()).filter(Boolean) : ["TK", "SD/MI", "SMP/MTS", "SMA/SMK/MA", "Mahasiswa"]);
 
   return (
     <div className="w-full p-6 space-y-6">
@@ -444,7 +447,7 @@ export default function CompetitionClient() {
               totalPlayersCount={players.length}
               refreshData={triggerRefresh}
               dbTotalRegistered={players.length}
-              categories={categories}
+              categories={derivedCategories}
             />
           </TabsContent>
           <TabsContent value="payment" className="m-0">
@@ -453,7 +456,7 @@ export default function CompetitionClient() {
               players={players}
               refreshData={triggerRefresh}
               dbTotalPaid={players.filter(p => p.paid).length}
-              categories={categories}
+              categories={derivedCategories}
             />
           </TabsContent>
           <TabsContent value="qualification" className="m-0">
@@ -462,14 +465,14 @@ export default function CompetitionClient() {
               players={players}
               refreshData={triggerRefresh}
               dbTotalFinalists={players.filter(p => p.isFinalist).length}
-              categories={categories}
+              categories={derivedCategories}
             />
           </TabsContent>
           <TabsContent value="standings" className="m-0">
             <PhaseStandings
               groups={groups}
               finalists={players.filter(p => p.isFinalist)}
-              categories={detail?.categories?.length > 0 ? detail.categories.map((c: any) => typeof c === 'string' ? c : c.name || "Unknown") : (detail?.category ? detail.category.split(",").map((s: string) => s.trim()).filter(Boolean) : ["Kindergarten", "SD/MI", "SMP/MTs", "SMA/SMK/MA", "University"])}
+              categories={derivedCategories}
               showBracket={false}
             />
           </TabsContent>
@@ -480,7 +483,7 @@ export default function CompetitionClient() {
               groups={groups}
               quizzes={[]}
               games={[]}
-              categories={detail?.categories?.length > 0 ? detail.categories.map((c: any) => typeof c === 'string' ? c : c.name || "Unknown") : (detail?.category ? detail.category.split(",").map((s: string) => s.trim()).filter(Boolean) : ["Kindergarten", "SD/MI", "SMP/MTs", "SMA/SMK/MA", "University"])}
+              categories={derivedCategories}
               onGroupsChange={setGroups}
               showGroupStageHeader={false}
               showBracket={true}
@@ -490,7 +493,7 @@ export default function CompetitionClient() {
             <PhaseChampion
               groups={groups}
               finalists={players.filter(p => p.isFinalist)}
-              categories={detail?.categories?.length > 0 ? detail.categories.map((c: any) => typeof c === 'string' ? c : c.name || "Unknown") : (detail?.category ? detail.category.split(",").map((s: string) => s.trim()).filter(Boolean) : ["Kindergarten", "SD/MI", "SMP/MTs", "SMA/SMK/MA", "University"])}
+              categories={derivedCategories}
             />
           </TabsContent>
         </div>
