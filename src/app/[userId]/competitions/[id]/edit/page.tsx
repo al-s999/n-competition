@@ -184,6 +184,7 @@ export default function EditCompetitionPage() {
   const router = useRouter();
   const params = useParams();
   const compId = params.id as string;
+  const userId = params.userId as string;
 
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
