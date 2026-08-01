@@ -41,7 +41,8 @@ export function LocationInput({ value, onChange, className }: LocationInputProps
   const step = useMemo(() => {
     if (parts.length === 1) return 0; // Country
     if (parts.length === 2) return 1; // State
-    return 2; // Done
+    if (parts.length === 3) return 2; // City
+    return 3; // Done or Postal Code
   }, [parts]);
 
   const countryIso = useMemo(() => {
@@ -131,6 +132,37 @@ export function LocationInput({ value, onChange, className }: LocationInputProps
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const fetchPostalCode = (cName: string, sName: string, cityName: string) => {
+      const query = `${cityName}, ${sName}, ${cName}`;
+      fetch(`https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&q=${encodeURIComponent(query)}&limit=1`, {
+         headers: { 'Accept-Language': 'id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7' }
+      })
+      .then(res => res.json())
+      .then(data => {
+        let code = "";
+        if (data && data[0] && data[0].address && data[0].address.postcode) {
+          code = data[0].address.postcode;
+        }
+        
+        setInputValue(prev => {
+           const p = prev.split(",");
+           if (p.length === 3 || p.length === 4) {
+              return `${p[0].trim()}, ${p[1].trim()}, ${p[2].trim()}${code ? `, ${code}` : ", "}`;
+           }
+           return prev;
+        });
+      })
+      .catch(() => {
+         setInputValue(prev => {
+           const p = prev.split(",");
+           if (p.length === 3 || p.length === 4) {
+              return `${p[0].trim()}, ${p[1].trim()}, ${p[2].trim()}, `;
+           }
+           return prev;
+        });
+      });
+  };
+
   const handleSelect = (item: { value: string, label: string }) => {
     if (step === 0) {
       const states = State.getStatesOfCountry(item.value);
@@ -141,19 +173,23 @@ export function LocationInput({ value, onChange, className }: LocationInputProps
       }
       setIsOpen(true);
     } else if (step === 1) {
+      setInputValue(`${parts[0].trim()}, ${item.label}, `);
+      setIsOpen(true);
+    } else if (step === 2) {
       const cName = parts[0].trim();
-      const sName = item.label;
+      let sName = parts[1].trim();
+      const newCity = item.label;
       
-      setInputValue(`${cName}, ${sName}`);
+      setInputValue(`${cName}, ${sName}, ${newCity}`);
       setIsOpen(false);
       inputRef.current?.blur();
       
-      // Fetch postal code for state if needed (or just stop here)
-      // fetchPostalCode(cName, sName, "");
+      // Fetch postal code
+      fetchPostalCode(cName, sName, newCity);
     }
     setActiveIndex(-1);
     
-    if (step < 1) {
+    if (step < 2) {
       inputRef.current?.focus();
     }
   };
@@ -179,9 +215,10 @@ export function LocationInput({ value, onChange, className }: LocationInputProps
     }
   };
 
-  let placeholder = "Ketik Negara, Provinsi...";
+  let placeholder = "Ketik Negara, Provinsi, Kota...";
   if (step === 0) placeholder = "Ketik nama negara...";
   if (step === 1) placeholder = "Ketik nama provinsi/state...";
+  if (step === 2) placeholder = "Ketik nama kota...";
 
   return (
     <div className={`relative w-full ${className || ''}`} ref={wrapperRef}>

@@ -672,7 +672,7 @@ export default function EditCompetitionPage() {
       <div className="flex items-center justify-between mb-8">
         <div>
           <div className="flex items-center text-sm text-zinc-400 mb-1">
-            <Link href="/competitions" className="hover:text-zinc-900 dark:text-white transition-colors">Competitions</Link>
+            <Link href={`/${userId}/competitions`} className="hover:text-zinc-900 dark:text-white transition-colors">Competitions</Link>
             <ChevronRight className="w-4 h-4 mx-1" />
             <span className="text-zinc-900 dark:text-white">Edit</span>
           </div>

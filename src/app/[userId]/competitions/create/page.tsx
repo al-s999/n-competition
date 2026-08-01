@@ -7,7 +7,7 @@ import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-
 
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -180,6 +180,8 @@ function ScheduleRowTimerControls({ match, onUpdateDuration }: { match: any, onU
 
 export default function AddCompetitionPage() {
   const router = useRouter();
+  const params = useParams();
+  const userId = params.userId as string;
 
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
@@ -251,7 +253,7 @@ export default function AddCompetitionPage() {
     ["SMA/SMK/MA"]: 4,
     ["SMP/MTS"]: 3,
     ["SD/MI"]: 2,
-    ["Kindergarten"]: 1
+    ["TK"]: 1
   };
   const [isSplitBySubject, setIsSplitBySubject] = useState(false);
   const [allocationPrizes, setAllocationPrizes] = useState<Record<string, { rank1: string, rank2: string, rank3: string }>>({});
@@ -580,7 +582,7 @@ export default function AddCompetitionPage() {
       <div className="flex items-center justify-between mb-8">
         <div>
           <div className="flex items-center text-sm text-zinc-400 mb-1">
-            <Link href="/competitions" className="hover:text-zinc-900 dark:text-white transition-colors">Competitions</Link>
+            <Link href={`/${userId}/competitions`} className="hover:text-zinc-900 dark:text-white transition-colors">Competitions</Link>
             <ChevronRight className="w-4 h-4 mx-1" />
             <span className="text-zinc-900 dark:text-white">Add</span>
           </div>

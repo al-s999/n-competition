@@ -231,7 +231,7 @@ export default function CompetitionClient() {
     return (
       <div className="p-8 max-w-4xl mx-auto text-center">
         <h2 className="text-2xl font-bold mb-4">Competition Not Found</h2>
-        <Button onClick={() => router.push("/competitions")}>
+        <Button onClick={() => router.push(userId ? `/${userId}/competitions` : "/competitions")}>
           <ArrowLeft className="w-4 h-4 mr-2" />Back</Button>
       </div>
     );
@@ -246,9 +246,6 @@ export default function CompetitionClient() {
   const totalPaid = players.filter(p => p.paid).length;
   const paidPercentage = totalRegistered > 0 ? Math.round((totalPaid / totalRegistered) * 100) : 0;
 
-  const derivedCategories = detail.categories && Array.isArray(detail.categories) && detail.categories.length > 0
-    ? detail.categories.map((c: any) => typeof c === 'string' ? c : c.name || "Unknown")
-    : (detail.category ? detail.category.split(",").map((s: string) => s.trim()).filter(Boolean) : ["TK", "SD/MI", "SMP/MTS", "SMA/SMK/MA", "Mahasiswa"]);
 
   return (
     <div className="w-full p-6 space-y-6">
@@ -447,7 +444,7 @@ export default function CompetitionClient() {
               totalPlayersCount={players.length}
               refreshData={triggerRefresh}
               dbTotalRegistered={players.length}
-              categories={derivedCategories}
+              categories={categories}
             />
           </TabsContent>
           <TabsContent value="payment" className="m-0">
@@ -456,7 +453,7 @@ export default function CompetitionClient() {
               players={players}
               refreshData={triggerRefresh}
               dbTotalPaid={players.filter(p => p.paid).length}
-              categories={derivedCategories}
+              categories={categories}
             />
           </TabsContent>
           <TabsContent value="qualification" className="m-0">
@@ -465,14 +462,14 @@ export default function CompetitionClient() {
               players={players}
               refreshData={triggerRefresh}
               dbTotalFinalists={players.filter(p => p.isFinalist).length}
-              categories={derivedCategories}
+              categories={categories}
             />
           </TabsContent>
           <TabsContent value="standings" className="m-0">
             <PhaseStandings
               groups={groups}
               finalists={players.filter(p => p.isFinalist)}
-              categories={derivedCategories}
+              categories={detail?.categories?.length > 0 ? detail.categories.map((c: any) => typeof c === 'string' ? c : c.name || "Unknown") : (detail?.category ? detail.category.split(",").map((s: string) => s.trim()).filter(Boolean) : ["Kindergarten", "SD/MI", "SMP/MTs", "SMA/SMK/MA", "University"])}
               showBracket={false}
             />
           </TabsContent>
@@ -483,7 +480,7 @@ export default function CompetitionClient() {
               groups={groups}
               quizzes={[]}
               games={[]}
-              categories={derivedCategories}
+              categories={detail?.categories?.length > 0 ? detail.categories.map((c: any) => typeof c === 'string' ? c : c.name || "Unknown") : (detail?.category ? detail.category.split(",").map((s: string) => s.trim()).filter(Boolean) : ["Kindergarten", "SD/MI", "SMP/MTs", "SMA/SMK/MA", "University"])}
               onGroupsChange={setGroups}
               showGroupStageHeader={false}
               showBracket={true}
@@ -493,7 +490,7 @@ export default function CompetitionClient() {
             <PhaseChampion
               groups={groups}
               finalists={players.filter(p => p.isFinalist)}
-              categories={derivedCategories}
+              categories={detail?.categories?.length > 0 ? detail.categories.map((c: any) => typeof c === 'string' ? c : c.name || "Unknown") : (detail?.category ? detail.category.split(",").map((s: string) => s.trim()).filter(Boolean) : ["Kindergarten", "SD/MI", "SMP/MTs", "SMA/SMK/MA", "University"])}
             />
           </TabsContent>
         </div>
