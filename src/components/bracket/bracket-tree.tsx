@@ -44,8 +44,6 @@ function extractCategory(m: Match): string {
       [/SMP\/MTs/i, "Middle School"],
       [/Mahasiswa/i, "University"],
       [/Umum/i, "General"],
-      [/Guru/i, "Guru"],
-      [/Santri/i, "Santri"],
       [/TK/i, "Kindergarten"],
     ];
     for (const [re, label] of patterns) {
@@ -222,7 +220,7 @@ function SingleCategoryBracket({
 }
 
 export function BracketTree({ matches, participants, adminMode = false, onMatchClick }: BracketTreeProps) {
-  
+
   // Exclude qualification-only matches from bracket view
   const bracketMatches = matches.filter(m => !BRACKET_EXCLUDED_PHASES.includes(normalizePhase(m.phase)));
 
@@ -239,7 +237,7 @@ export function BracketTree({ matches, participants, adminMode = false, onMatchC
     categoriesMap.get(cat)!.push(m);
   });
 
-  const CATEGORY_ORDER = ["Elementary", "Middle School", "High School", "University", "General"];
+  const CATEGORY_ORDER = ["TK", "SD/MI", "SMP/MTS", "SMA/SMK/MA", "Mahasiswa"];
   const categories = Array.from(categoriesMap.keys()).sort((a, b) => {
     const ia = CATEGORY_ORDER.indexOf(a);
     const ib = CATEGORY_ORDER.indexOf(b);

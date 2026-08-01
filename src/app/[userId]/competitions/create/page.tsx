@@ -247,11 +247,10 @@ export default function AddCompetitionPage() {
   const [isSubjectFocused, setIsSubjectFocused] = useState(false);
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const PRIZE_WEIGHTS: Record<string, number> = {
-    ["University"]: 5,
-    ["General"]: 5,
-    ["High School"]: 4,
-    ["Middle School"]: 3,
-    ["Elementary"]: 2,
+    ["Mahasiswa"]: 5,
+    ["SMA/SMK/MA"]: 4,
+    ["SMP/MTS"]: 3,
+    ["SD/MI"]: 2,
     ["Kindergarten"]: 1
   };
   const [isSplitBySubject, setIsSplitBySubject] = useState(false);
@@ -462,7 +461,7 @@ export default function AddCompetitionPage() {
       return timeA - timeB;
     });
 
-  const CATEGORIES = ["Kindergarten", "Elementary", "Middle School", "High School", "University", "General"];
+  const CATEGORIES = ["TK", "SD/MI", "SMP/MTS", "SMA/SMK/MA", "Mahasiswa"];
 
   const toggleCategory = (cat: string) => {
     setCategories(prev => prev.includes(cat) ? prev.filter(c => c !== cat) : [...prev, cat]);
@@ -954,7 +953,7 @@ export default function AddCompetitionPage() {
                       />
                     </div>
                     <div className="flex items-center gap-3">
-                      <Badge className="bg-zinc-300/20 text-zinc-300 hover:bg-zinc-300/30 border-none w-20 py-1.5 justify-center text-xs font-bold shadow-sm">2nd Place</Badge>
+                      <Badge className="bg-slate-400/20 text-slate-600 dark:text-slate-300 hover:bg-slate-400/30 border-none w-20 py-1.5 justify-center text-xs font-bold shadow-sm">2nd Place</Badge>
                       <Input
                         type="text"
                         placeholder="Rp / Prize"
@@ -964,7 +963,7 @@ export default function AddCompetitionPage() {
                       />
                     </div>
                     <div className="flex items-center gap-3">
-                      <Badge className="bg-orange-700/20 text-orange-500 hover:bg-orange-700/30 border-none w-20 py-1.5 justify-center text-xs font-bold shadow-sm">3rd Place</Badge>
+                      <Badge className="bg-orange-500/20 text-orange-600 dark:text-orange-500 hover:bg-orange-500/30 border-none w-20 py-1.5 justify-center text-xs font-bold shadow-sm">3rd Place</Badge>
                       <Input
                         type="text"
                         placeholder="Rp / Prize"
