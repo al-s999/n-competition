@@ -101,10 +101,6 @@ export function PhaseQualification({
     setSearch(val);
     setCurrentPage(1);
   };
-  const onSearch = (val: string) => {
-    setSearch(val);
-    setCurrentPage(1);
-  };
 
   const onToggleFinalist = async (playerId: string) => {
     try {
