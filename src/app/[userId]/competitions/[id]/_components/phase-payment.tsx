@@ -51,6 +51,7 @@ export function PhasePayment({
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [search, setSearch] = useState("");
+  const [paymentStatusFilter, setPaymentStatusFilter] = useState("all");
 
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [subjectFilter, setSubjectFilter] = useState("all");
@@ -73,8 +74,9 @@ export function PhasePayment({
 
     const matchesCat = categoryFilter === "all" || p.category === categoryFilter;
     const matchesSub = !isSeparate || subjectFilter === "all" || p.subject === subjectFilter;
+    const matchesPayment = paymentStatusFilter === "all" || (paymentStatusFilter === "paid" ? p.paid : !p.paid);
 
-    return matchesSearch && matchesCat && matchesSub;
+    return matchesSearch && matchesCat && matchesSub && matchesPayment;
   });
 
   filteredPlayers.sort((a, b) => {
@@ -146,6 +148,19 @@ export function PhasePayment({
               </SelectContent>
             </Select>
           )}
+          <Select value={paymentStatusFilter} onValueChange={(val) => { setPaymentStatusFilter(val); setCurrentPage(1); }}>
+            <SelectTrigger className="w-[140px] h-9 shrink-0 bg-background border-border">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground whitespace-nowrap truncate">
+                <SlidersHorizontal className="h-3.5 w-3.5 hidden sm:block" />
+                <SelectValue placeholder="Status" />
+              </div>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Status</SelectItem>
+              <SelectItem value="paid">Paid</SelectItem>
+              <SelectItem value="unpaid">Unpaid</SelectItem>
+            </SelectContent>
+          </Select>
           {isSeparate && availableSubjects.length > 0 && (
             <Select value={subjectFilter} onValueChange={(val) => { setSubjectFilter(val); setCurrentPage(1); }}>
               <SelectTrigger className="w-[160px] h-9 shrink-0 bg-background border-border">
@@ -188,7 +203,7 @@ export function PhasePayment({
               sorted.map((player, idx) => {
                 const absoluteIdx = (currentPage - 1) * pageSize + idx + 1;
                 return (
-                  <TableRow key={player.id} className={!player.paid ? "opacity-60" : ""}>
+                  <TableRow key={player.id}>
                     <TableCell className="text-center text-sm text-muted-foreground">{absoluteIdx}</TableCell>
                     <TableCell>
                       <Link href={`/users/${player.userId || player.id}`} target="_blank" className="flex items-center gap-2 group p-1.5 -ml-1.5 rounded-md hover:bg-muted/50 transition-colors w-fit">
@@ -273,7 +288,7 @@ export function PhasePayment({
           sorted.map((player, idx) => {
             const absoluteIdx = (currentPage - 1) * pageSize + idx + 1;
             return (
-              <div key={player.id} className={`rounded-lg border bg-card p-3 space-y-2 ${!player.paid ? "opacity-60" : ""}`}>
+              <div key={player.id} className="rounded-lg border bg-card p-3 space-y-2">
                 {/* Player header */}
                 <div className="flex items-center gap-3">
                   <span className="inline-flex items-center justify-center h-5 w-5 rounded-full text-[10px] font-bold bg-muted text-muted-foreground shrink-0">{absoluteIdx}</span>

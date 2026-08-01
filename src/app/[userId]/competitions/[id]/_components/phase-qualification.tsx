@@ -53,7 +53,6 @@ export function PhaseQualification({
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [search, setSearch] = useState("");
-  const [subTab, setSubTab] = useState<"paid" | "finalist">("paid");
 
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [subjectFilter, setSubjectFilter] = useState("all");
@@ -69,9 +68,7 @@ export function PhaseQualification({
     return idx === -1 ? 999 : idx;
   };
 
-  const filteredByTab = players.filter(p => subTab === "finalist" ? p.isFinalist : p.paid);
-
-  const filteredPlayers = filteredByTab.filter(p => {
+  const filteredPlayers = players.filter(p => {
     const matchesSearch = p.name.toLowerCase().includes(search.toLowerCase()) ||
       (p.username && p.username.toLowerCase().includes(search.toLowerCase())) ||
       (p.schoolName && p.schoolName.toLowerCase().includes(search.toLowerCase()));
@@ -104,8 +101,8 @@ export function PhaseQualification({
     setSearch(val);
     setCurrentPage(1);
   };
-  const onSubTabChange = (tab: "paid" | "finalist") => {
-    setSubTab(tab);
+  const onSearch = (val: string) => {
+    setSearch(val);
     setCurrentPage(1);
   };
 
@@ -207,31 +204,8 @@ export function PhaseQualification({
           )}
         </div>
       </div>
-
-      {/* Sub-Tabs: Paid | Finalist */}
-      <div className="flex items-center gap-0 border rounded-lg overflow-hidden w-fit">
-        <button
-          onClick={() => { onSubTabChange("paid"); setSelectedIds([]); }}
-          className={`px-4 py-2 text-sm font-medium transition-colors cursor-pointer ${subTab === "paid"
-              ? "bg-primary text-primary-foreground"
-              : "bg-muted/50 text-muted-foreground hover:bg-muted"
-            }`}
-        >
-          paid ({totalPaid})
-        </button>
-        <button
-          onClick={() => { onSubTabChange("finalist"); setSelectedIds([]); }}
-          className={`px-4 py-2 text-sm font-medium transition-colors border-l cursor-pointer ${subTab === "finalist"
-              ? "bg-primary text-primary-foreground"
-              : "bg-muted/50 text-muted-foreground hover:bg-muted"
-            }`}
-        >
-          Finalist ({totalFinalists})
-        </button>
-      </div>
-
       {/* Batch Action */}
-      {subTab === "paid" && selectedIds.length > 0 && (
+      {selectedIds.length > 0 && (
         <div className="flex items-center gap-3 p-3 rounded-lg bg-primary/5 border border-primary/20">
           <span className="text-sm font-medium">
             {selectedIds.length} "selected"
@@ -247,18 +221,16 @@ export function PhaseQualification({
         <Table>
           <TableHeader>
             <TableRow>
-              {subTab === "paid" && (
-                <TableHead className="w-[40px] px-0 text-center">
-                  <div className="flex justify-center w-full">
-                    <Checkbox
-                      checked={selectableIds.length > 0 && allSelected}
-                      onCheckedChange={toggleSelectAll}
-                      disabled={selectableIds.length === 0}
-                      className="h-4 w-4 border-muted-foreground/50"
-                    />
-                  </div>
-                </TableHead>
-              )}
+              <TableHead className="w-[40px] px-0 text-center">
+                <div className="flex justify-center w-full">
+                  <Checkbox
+                    checked={selectableIds.length > 0 && allSelected}
+                    onCheckedChange={toggleSelectAll}
+                    disabled={selectableIds.length === 0}
+                    className="h-4 w-4 border-muted-foreground/50"
+                  />
+                </div>
+              </TableHead>
               <TableHead className="w-[50px] text-center">#</TableHead>
               <TableHead>Player</TableHead>
               <TableHead>Category</TableHead>
@@ -271,7 +243,7 @@ export function PhaseQualification({
           <TableBody>
             {sorted.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={subTab === "paid" ? 8 : 7} className="h-20 text-center text-muted-foreground">No players found</TableCell>
+                <TableCell colSpan={8} className="h-20 text-center text-muted-foreground">No players found</TableCell>
               </TableRow>
             ) : (
               sorted.map((player, idx) => {
@@ -282,23 +254,21 @@ export function PhaseQualification({
                 return (
                   <TableRow
                     key={player.id}
-                    className={`${isFinalist && subTab === "paid" ? "bg-emerald-500/5" : ""} ${subTab === "paid" && !isFinalist ? "cursor-pointer hover:bg-muted/50 transition-colors" : ""}`}
+                    className={`${isFinalist ? "bg-emerald-500/5" : "cursor-pointer hover:bg-muted/50 transition-colors"}`}
                     onClick={() => {
-                      if (subTab === "paid" && !isFinalist) {
+                      if (!isFinalist) {
                         toggleSelect(player.id);
                       }
                     }}
                   >
-                    {subTab === "paid" && (
-                      <TableCell onClick={(e) => e.stopPropagation()}>
-                        <Checkbox
-                          checked={isSelected || !!isFinalist}
-                          disabled={!!isFinalist}
-                          onCheckedChange={() => toggleSelect(player.id)}
-                          className="h-4 w-4"
-                        />
-                      </TableCell>
-                    )}
+                    <TableCell onClick={(e) => e.stopPropagation()}>
+                      <Checkbox
+                        checked={isSelected || !!isFinalist}
+                        disabled={!!isFinalist}
+                        onCheckedChange={() => toggleSelect(player.id)}
+                        className="h-4 w-4"
+                      />
+                    </TableCell>
                     <TableCell className="text-center text-sm text-muted-foreground">{absoluteIdx}</TableCell>
                     <TableCell>
                       <Link
@@ -359,7 +329,7 @@ export function PhaseQualification({
                       )}
                     </TableCell>
                     <TableCell className="text-center">
-                      {subTab === "paid" && !isFinalist && (
+                      {!isFinalist && (
                         <Button
                           size="sm"
                           variant="ghost"
@@ -372,7 +342,7 @@ export function PhaseQualification({
                         >
                           <ArrowUpRight className="h-3 w-3" />Move to Finalist</Button>
                       )}
-                      {subTab === "finalist" && (
+                      {isFinalist && (
                         <Button
                           size="sm"
                           variant="ghost"
@@ -380,7 +350,7 @@ export function PhaseQualification({
                           onClick={(e) => {
                             e.stopPropagation();
                             onToggleFinalist(player.id);
-                            toast.success(`${player.name} → $"paid"`);
+                            toast.success(`${player.name} → Removed from Finalist`);
                           }}
                         >
                           <Undo2 className="h-3 w-3" />Remove from Finalist</Button>
@@ -406,23 +376,20 @@ export function PhaseQualification({
             return (
               <div
                 key={player.id}
-                className={`rounded-lg border bg-card p-3 space-y-2 transition-colors ${isFinalist && subTab === "paid" ? "bg-emerald-500/5 border-emerald-200/50" : ""
-                  } ${subTab === "paid" && !isFinalist ? "cursor-pointer active:bg-muted/50" : ""}`}
+                className={`rounded-lg border bg-card p-3 space-y-2 transition-colors ${isFinalist ? "bg-emerald-500/5 border-emerald-200/50" : "cursor-pointer active:bg-muted/50"}`}
                 onClick={() => {
-                  if (subTab === "paid" && !isFinalist) toggleSelect(player.id);
+                  if (!isFinalist) toggleSelect(player.id);
                 }}
               >
                 {/* Player header */}
                 <div className="flex items-center gap-2.5">
-                  {subTab === "paid" && (
-                    <Checkbox
-                      checked={isSelected || !!isFinalist}
-                      disabled={!!isFinalist}
-                      onCheckedChange={() => toggleSelect(player.id)}
-                      className="h-4 w-4 shrink-0"
-                      onClick={(e) => e.stopPropagation()}
-                    />
-                  )}
+                  <Checkbox
+                    checked={isSelected || !!isFinalist}
+                    disabled={!!isFinalist}
+                    onCheckedChange={() => toggleSelect(player.id)}
+                    className="h-4 w-4 shrink-0"
+                    onClick={(e) => e.stopPropagation()}
+                  />
                   <span className="inline-flex items-center justify-center h-5 w-5 rounded-full text-[10px] font-bold bg-muted text-muted-foreground shrink-0">{absoluteIdx}</span>
                   <Link
                     href={`/users/${player.userId || player.id}`}
@@ -465,7 +432,7 @@ export function PhaseQualification({
                       <span className={`font-medium ${getScoreTextClass(player.avgScore)}`}>{player.avgScore.toFixed(1)}</span>
                     </button>
                   </div>
-                  {subTab === "paid" && !isFinalist && (
+                  {!isFinalist && (
                     <Button
                       size="sm"
                       variant="ghost"
@@ -478,7 +445,7 @@ export function PhaseQualification({
                     >
                       <ArrowUpRight className="h-3 w-3" />Move to Finalist</Button>
                   )}
-                  {subTab === "finalist" && (
+                  {isFinalist && (
                     <Button
                       size="sm"
                       variant="ghost"
@@ -486,7 +453,7 @@ export function PhaseQualification({
                       onClick={(e) => {
                         e.stopPropagation();
                         onToggleFinalist(player.id);
-                        toast.success(`${player.name} → $"paid"`);
+                        toast.success(`${player.name} → Removed from Finalist`);
                       }}
                     >
                       <Undo2 className="h-3 w-3" />Remove from Finalist</Button>

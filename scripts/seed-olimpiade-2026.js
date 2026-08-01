@@ -156,6 +156,17 @@ async function seed() {
       const gamesPlayed = randomInt(0, 10);
       const avgScore = randomInt(40, 100);
       
+      const isSmp = i <= 25;
+      const category = isSmp ? 'smp/mts' : 'sma/smk/ma';
+      
+      let finalSchool = school;
+      if (isSmp) {
+        finalSchool = finalSchool.replace(/SMA/gi, 'SMP');
+      } else {
+        finalSchool = finalSchool.replace(/SMP/gi, 'SMA');
+        if (!finalSchool.includes('SMA')) finalSchool += " SMA";
+      }
+
       participantsData.push({
         competition_id: comp.id,
         user_id: pUser.id,
@@ -163,9 +174,9 @@ async function seed() {
         payment_status: payStatus,
         is_finalist: isFinalist,
         is_present: randomInt(1, 10) > 2, // 80% attendance
-        category: 'Umum',
+        category: category,
         subject: subject,
-        school_name: school,
+        school_name: finalSchool,
         games_played: gamesPlayed,
         avg_score: avgScore,
       });
