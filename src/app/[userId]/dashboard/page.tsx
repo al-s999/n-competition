@@ -80,7 +80,7 @@ export default function GlobalDashboardPage() {
       let comps: Competition[] = [];
       let receptionistFlag = false;
 
-      if (user.role === "competition") {
+      if (user.role?.toLowerCase() === "competition") {
         comps = await CompetitionService.getCompetitionsByOwner(user.id);
       } else {
         const members = await MemberService.getMembersByUser(user.id);

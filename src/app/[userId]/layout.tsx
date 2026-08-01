@@ -85,7 +85,7 @@ export default function DashboardLayout({
     );
   }
 
-  const title = user.role === "COMPETITION" ? "Organizer" : (isOnlyMC ? "MC" : "Dashboard");
+  const title = user.role?.toLowerCase() === "competition" ? "Organizer" : (isOnlyMC ? "MC" : "Dashboard");
 
   const navItems: NavItem[] = [
     ...(!isOnlyMC

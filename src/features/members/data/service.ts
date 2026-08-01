@@ -1,5 +1,6 @@
 import { CompetitionMember, CompetitionRole } from "./types";
 import { createClient } from "@/utils/supabase/client";
+import { appCache } from "@/utils/cache";
 
 export class MemberService {
   static async getMember(
@@ -25,41 +26,46 @@ export class MemberService {
   static async getMembersByCompetition(
     competitionId: string
   ): Promise<CompetitionMember[]> {
-    const supabase = createClient();
-    const { data, error } = await supabase
-      .from('competitions')
-      .select('id, mc_id, manager_id, receptionist_id, created_at')
-      .eq('id', competitionId)
-      .single();
+    return appCache.withCache(`members_comp_${competitionId}`, async () => {
+      const supabase = createClient();
+      const { data, error } = await supabase
+        .from('competitions')
+        .select('id, mc_id, manager_id, receptionist_id, created_at')
+        .eq('id', competitionId)
+        .single();
 
-    if (error || !data) return [];
+      if (error || !data) return [];
 
-    const members: CompetitionMember[] = [];
-    if (data.mc_id) members.push({ id: data.id + '-mc', competition_id: data.id, user_id: data.mc_id, role: 'MC', created_at: data.created_at });
-    if (data.manager_id) members.push({ id: data.id + '-mgr', competition_id: data.id, user_id: data.manager_id, role: 'MANAGER', created_at: data.created_at });
-    if (data.receptionist_id) members.push({ id: data.id + '-rec', competition_id: data.id, user_id: data.receptionist_id, role: 'RECEPTIONIST', created_at: data.created_at });
+      const members: CompetitionMember[] = [];
+      if (data.mc_id) members.push({ id: data.id + '-mc', competition_id: data.id, user_id: data.mc_id, role: 'MC', created_at: data.created_at });
+      if (data.manager_id) members.push({ id: data.id + '-mgr', competition_id: data.id, user_id: data.manager_id, role: 'MANAGER', created_at: data.created_at });
+      if (data.receptionist_id) members.push({ id: data.id + '-rec', competition_id: data.id, user_id: data.receptionist_id, role: 'RECEPTIONIST', created_at: data.created_at });
 
-    return members;
+      return members;
+    }, 5 * 60 * 1000);
   }
 
   static async getMembersByUser(
     userId: string
   ): Promise<CompetitionMember[]> {
-    const supabase = createClient();
-    const { data, error } = await supabase
-      .from('competitions')
-      .select('id, mc_id, manager_id, receptionist_id, created_at')
-      .or(`mc_id.eq.${userId},manager_id.eq.${userId},receptionist_id.eq.${userId}`);
+    return appCache.withCache(`members_user_${userId}`, async () => {
+      const supabase = createClient();
+      const { data, error } = await supabase
+        .from('competitions')
+        .select('id, mc_id, manager_id, receptionist_id, created_at')
+        .or(`mc_id.eq.${userId},manager_id.eq.${userId},receptionist_id.eq.${userId}`);
 
-    if (error || !data) return [];
+      if (error || !data) return [];
 
-    const members: CompetitionMember[] = [];
-    for (const comp of data) {
-      if (comp.mc_id === userId) members.push({ id: comp.id + '-mc', competition_id: comp.id, user_id: userId, role: 'MC', created_at: comp.created_at });
-      if (comp.manager_id === userId) members.push({ id: comp.id + '-mgr', competition_id: comp.id, user_id: userId, role: 'MANAGER', created_at: comp.created_at });
-      if (comp.receptionist_id === userId) members.push({ id: comp.id + '-rec', competition_id: comp.id, user_id: userId, role: 'RECEPTIONIST', created_at: comp.created_at });
-    }
-    return members;
+      const members: CompetitionMember[] = [];
+      for (const comp of data) {
+        if (comp.mc_id === userId) members.push({ id: comp.id + '-mc', competition_id: comp.id, user_id: userId, role: 'MC', created_at: comp.created_at });
+        if (comp.manager_id === userId) members.push({ id: comp.id + '-mgr', competition_id: comp.id, user_id: userId, role: 'MANAGER', created_at: comp.created_at });
+        if (comp.receptionist_id === userId) members.push({ id: comp.id + '-rec', competition_id: comp.id, user_id: userId, role: 'RECEPTIONIST', created_at: comp.created_at });
+      }
+
+      return members;
+    }, 5 * 60 * 1000);
   }
 
   // Note: These mutations might need adjusting if the UI is trying to add multiple members

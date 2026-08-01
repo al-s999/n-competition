@@ -61,15 +61,17 @@ export class CompetitionService {
   }
 
   static async getCompetitionById(id: string): Promise<Competition | null> {
-    const supabase = createClient();
-    const { data, error } = await supabase
-      .from('competitions')
-      .select('*')
-      .eq('id', id)
-      .single();
+    return appCache.withCache(`comp_${id}`, async () => {
+      const supabase = createClient();
+      const { data, error } = await supabase
+        .from('competitions')
+        .select('*')
+        .eq('id', id)
+        .single();
 
-    if (error || !data) return null;
-    return this.mapToCompetition(data);
+      if (error || !data) return null;
+      return this.mapToCompetition(data);
+    }, 5 * 60 * 1000);
   }
 
   static async updateStatus(

@@ -33,13 +33,15 @@ export function useCompetitionsTable() {
   const [deleteConfirmationPhrase, setDeleteConfirmationPhrase] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const debouncedSearch = useDebounce(searchInput, 350);
+  const debouncedSearch = useDebounce(searchInput, 150);
   const { user } = useAuth();
 
   useEffect(() => {
     setSearchQuery(debouncedSearch);
     setCurrentPage(1);
   }, [debouncedSearch]);
+
+  const [allCompetitions, setAllCompetitions] = useState<Competition[]>([]);
 
   // Helper to safely extract categories as string array
   const extractCategories = (comp: Competition): string[] => {
@@ -56,10 +58,10 @@ export function useCompetitionsTable() {
     if (!user) return;
     setIsLoading(true);
     try {
-      let allComps: Competition[] = [];
+      let fetchedComps: Competition[] = [];
 
-      if (user.role === "competition") {
-        allComps = await CompetitionService.getCompetitionsByOwner(user.id);
+      if (user.role?.toLowerCase() === "competition") {
+        fetchedComps = await CompetitionService.getCompetitionsByOwner(user.id);
       } else {
         const members = await MemberService.getMembersByUser(user.id);
         const compIds = members
@@ -69,14 +71,14 @@ export function useCompetitionsTable() {
         // Remove duplicates if any
         const uniqueIds = Array.from(new Set(compIds));
         
-        const fetchedComps = await Promise.all(uniqueIds.map(id => CompetitionService.getCompetitionById(id)));
-        allComps = fetchedComps.filter(Boolean) as Competition[];
+        const comps = await Promise.all(uniqueIds.map(id => CompetitionService.getCompetitionById(id)));
+        fetchedComps = comps.filter(Boolean) as Competition[];
       }
       
       // Extract available filters
       const categoriesSet = new Set<string>();
       const locationsSet = new Set<string>();
-      allComps.forEach(c => {
+      fetchedComps.forEach(c => {
         extractCategories(c).forEach(cat => {
           if (cat) categoriesSet.add(cat);
         });
@@ -85,29 +87,7 @@ export function useCompetitionsTable() {
       setAvailableCategories(Array.from(categoriesSet).sort());
       setAvailableLocations(Array.from(locationsSet).sort());
 
-      let filtered = allComps;
-      if (searchQuery) {
-        filtered = filtered.filter(c => c.name.toLowerCase().includes(searchQuery.toLowerCase()));
-      }
-      if (statusFilter !== "all") {
-        filtered = filtered.filter(c => c.status === statusFilter);
-      }
-      if (categoryFilter !== "all") {
-        filtered = filtered.filter(c => {
-          const cats = extractCategories(c);
-          return cats.includes(categoryFilter);
-        });
-      }
-      if (locationFilter !== "all") {
-        filtered = filtered.filter(c => c.location === locationFilter);
-      }
-      
-      setTotalPages(Math.ceil(filtered.length / itemsPerPage) || 1);
-      
-      const start = (currentPage - 1) * itemsPerPage;
-      const paginated = filtered.slice(start, start + itemsPerPage);
-      
-      setCompetitions(paginated);
+      setAllCompetitions(fetchedComps);
     } catch (error: any) {
       console.error("Error fetching competitions:", error);
       toast.error(error.message || "Failed to load competitions");
@@ -116,9 +96,37 @@ export function useCompetitionsTable() {
     }
   };
 
+  // 1. Fetch exactly once on mount or user change
   useEffect(() => {
     fetchCompetitions();
-  }, [currentPage, searchQuery, statusFilter, categoryFilter, locationFilter, user]);
+  }, [user]);
+
+  // 2. Filter instantly when dependencies change
+  useEffect(() => {
+    let filtered = allCompetitions;
+    if (searchQuery) {
+      filtered = filtered.filter(c => c.name.toLowerCase().includes(searchQuery.toLowerCase()));
+    }
+    if (statusFilter !== "all") {
+      filtered = filtered.filter(c => c.status === statusFilter);
+    }
+    if (categoryFilter !== "all") {
+      filtered = filtered.filter(c => {
+        const cats = extractCategories(c);
+        return cats.includes(categoryFilter);
+      });
+    }
+    if (locationFilter !== "all") {
+      filtered = filtered.filter(c => c.location === locationFilter);
+    }
+    
+    setTotalPages(Math.ceil(filtered.length / itemsPerPage) || 1);
+    
+    const start = (currentPage - 1) * itemsPerPage;
+    const paginated = filtered.slice(start, start + itemsPerPage);
+    
+    setCompetitions(paginated);
+  }, [currentPage, searchQuery, statusFilter, categoryFilter, locationFilter, allCompetitions]);
 
   const handleStatusFilterChange = (val: string) => {
     setStatusFilter(val);
